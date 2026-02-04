@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sensory Navigator</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen">
+      <div class="auth-container">
+        <div class="logo-section">
+          <div class="logo">
+            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="3"/>
+              <path d="M30 50 L45 65 L70 35" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <h1>Sensory Navigator</h1>
+          <p class="tagline">Модуль пользователей и отзывов</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form" class="auth-form active">
+          <h2>Вход</h2>
+          <div class="form-group">
+            <label for="login-email">Email</label>
+            <input type="email" id="login-email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="login-password">Пароль</label>
+            <input type="password" id="login-password" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Войти</button>
+          <div class="form-footer">
+            <a href="#" id="show-forgot">Забыли пароль?</a>
+            <span class="divider">|</span>
+            <a href="#" id="show-register">Создать аккаунт</a>
+          </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" class="auth-form">
+          <h2>Регистрация</h2>
+          <div class="form-group">
+            <label for="register-username">Имя пользователя</label>
+            <input type="text" id="register-username" placeholder="Ваше имя" required minlength="2" />
+          </div>
+          <div class="form-group">
+            <label for="register-email">Email</label>
+            <input type="email" id="register-email" placeholder="your@email.com" required />
+          </div>
+          <div class="form-group">
+            <label for="register-password">Пароль</label>
+            <input type="password" id="register-password" placeholder="Минимум 6 символов" required minlength="6" />
+          </div>
+          <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+          <div class="form-footer">
+            <a href="#" id="show-login">Уже есть аккаунт? Войти</a>
+          </div>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="forgot-form" class="auth-form">
+          <h2>Восстановление пароля</h2>
+          <p class="form-description">Введите email для получения ссылки на восстановление пароля</p>
+          <div class="form-group">
+            <label for="forgot-email">Email</label>
+            <input type="email" id="forgot-email" placeholder="your@email.com" required />
+          </div>
+          <button type="submit" class="btn btn-primary">Отправить</button>
+          <div class="form-footer">
+            <a href="#" id="back-to-login">Вернуться ко входу</a>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App Screen -->
+    <div id="main-screen" class="screen hidden">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="user-info">
+            <div class="user-avatar" id="user-avatar">
+              <span id="avatar-letter">U</span>
+            </div>
+            <div class="user-details">
+              <span class="user-name" id="user-name">Пользователь</span>
+              <span class="user-email" id="user-email">user@email.com</span>
+            </div>
+          </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+          <a href="#" class="nav-item active" data-page="profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Профиль</span>
+          </a>
+          <a href="#" class="nav-item" data-page="reviews">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>Мои отзывы</span>
+          </a>
+          <a href="#" class="nav-item" data-page="favorites">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+            <span>Избранное</span>
+          </a>
+          <a href="#" class="nav-item" data-page="settings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+            <span>Настройки</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <button id="logout-btn" class="btn btn-outline">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+              <polyline points="16,17 21,12 16,7"/>
+              <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            <span>Выйти</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Profile Page -->
+        <div id="profile-page" class="page active">
+          <div class="page-header">
+            <h1>Профиль</h1>
+          </div>
+          <div class="profile-card">
+            <div class="profile-avatar-section">
+              <div class="profile-avatar" id="profile-avatar">
+                <span id="profile-avatar-letter">U</span>
+              </div>
+              <button class="btn btn-small btn-outline">Изменить фото</button>
+            </div>
+            <form id="profile-form" class="profile-form">
+              <div class="form-group">
+                <label for="profile-username">Имя пользователя</label>
+                <input type="text" id="profile-username" placeholder="Ваше имя" />
+              </div>
+              <div class="form-group">
+                <label for="profile-email">Email</label>
+                <input type="email" id="profile-email" disabled />
+              </div>
+              <div class="form-group">
+                <label for="profile-birthdate">Дата рождения</label>
+                <input type="date" id="profile-birthdate" />
+              </div>
+              <button type="submit" class="btn btn-primary">Сохранить изменения</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Reviews Page -->
+        <div id="reviews-page" class="page">
+          <div class="page-header">
+            <h1>Мои отзывы</h1>
+          </div>
+          <div id="reviews-list" class="reviews-list">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <p>У вас пока нет отзывов</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Favorites Page -->
+        <div id="favorites-page" class="page">
+          <div class="page-header">
+            <h1>Избранное</h1>
+          </div>
+          <div id="favorites-list" class="favorites-list">
+            <div class="empty-state">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+              </svg>
+              <p>Список избранного пуст</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Page -->
+        <div id="settings-page" class="page">
+          <div class="page-header">
+            <h1>Настройки</h1>
+          </div>
+          <div class="settings-section">
+            <h3>Уведомления</h3>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Push-уведомления</span>
+                <span class="setting-description">Получать уведомления о новых отзывах</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="setting-notifications" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Email-уведомления</span>
+                <span class="setting-description">Получать письма о важных событиях</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="setting-email" checked />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+          
+          <div class="settings-section">
+            <h3>Внешний вид</h3>
+            <div class="setting-item">
+              <div class="setting-info">
+                <span class="setting-label">Тёмная тема</span>
+                <span class="setting-description">Использовать тёмное оформление</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="setting-theme" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container"></div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
+
