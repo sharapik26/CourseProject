@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: Sensory Navigator — Users & Reviews API
+  version: "1.0"
+  description: |
+    REST API модуля пользователей и отзывов проекта «Сенсорный навигатор».
+    Авторизация через JWT (Bearer token).
+servers:
+  - url: http://localhost:8081
+paths:
+  /api/auth/register:
+    post:
+      tags: [auth]
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterReq' }
+      responses:
+        '201':
+          description: Успешная регистрация
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResp' }
+        '409': { description: email или username уже заняты }
+
+  /api/auth/login:
+    post:
+      tags: [auth]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginReq' }
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TokenResp' }
+        '401': { description: Неверные учётные данные }
+
+  /api/users/me:
+    get:
+      tags: [users]
+      summary: Текущий пользователь
+      security: [ { bearerAuth: [] } ]
+      responses:
+        '200':
+          description: Профиль
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+    put:
+      tags: [users]
+      summary: Обновление профиля
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateProfileReq' }
+      responses:
+        '200':
+          description: Обновлённый профиль
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+
+  /api/users/me/password:
+    put:
+      tags: [users]
+      summary: Смена пароля
+      security: [ { bearerAuth: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChangePasswordReq' }
+      responses:
+        '204': { description: Пароль изменён }
+
+  /api/places/{id}/reviews:
+    get:
+      tags: [reviews]
+      summary: Отзывы по месту
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Список отзывов
+    post:
+      tags: [reviews]
+      summary: Создать отзыв
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewReq' }
+      responses:
+        '201':
+          description: Отзыв создан
+        '409': { description: отзыв уже существует }
+
+  /api/reviews/{id}:
+    put:
+      tags: [reviews]
+      summary: Изменить свой отзыв
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewReq' }
+      responses: { '200': { description: Изменено } }
+    delete:
+      tags: [reviews]
+      summary: Удалить свой отзыв
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses: { '204': { description: Удалено } }
+
+  /api/places/{id}/aggregate:
+    get:
+      tags: [reviews]
+      summary: Агрегированные сенсорные оценки места
+      description: |
+        Публичный API для модуля карты. Возвращает средние значения
+        пяти сенсорных параметров и количество отзывов.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Агрегаты
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Aggregate' }
+
+  /api/users/me/reviews:
+    get:
+      tags: [reviews]
+      summary: Мои отзывы
+      security: [ { bearerAuth: [] } ]
+      responses: { '200': { description: Список отзывов } }
+
+  /api/users/me/favorites:
+    get:
+      tags: [favorites]
+      summary: Избранные места
+      security: [ { bearerAuth: [] } ]
+      responses: { '200': { description: Список мест } }
+
+  /api/favorites/{id}:
+    post:
+      tags: [favorites]
+      summary: Добавить в избранное
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses: { '201': { description: Добавлено } }
+    delete:
+      tags: [favorites]
+      summary: Убрать из избранного
+      security: [ { bearerAuth: [] } ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses: { '204': { description: Удалено } }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        email: { type: string }
+        username: { type: string }
+        display_name: { type: string }
+        avatar_url: { type: string }
+        noise_pref: { type: integer }
+        light_pref: { type: integer }
+        crowd_pref: { type: integer }
+        smell_pref: { type: integer }
+        visual_pref: { type: integer }
+    RegisterReq:
+      type: object
+      required: [email, username, password]
+      properties:
+        email: { type: string, format: email }
+        username: { type: string, minLength: 3, maxLength: 64 }
+        password: { type: string, minLength: 6 }
+        display_name: { type: string }
+    LoginReq:
+      type: object
+      required: [email, password]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string }
+    TokenResp:
+      type: object
+      properties:
+        token: { type: string }
+        expires_at: { type: string, format: date-time }
+        user: { $ref: '#/components/schemas/User' }
+    UpdateProfileReq:
+      type: object
+      properties:
+        display_name: { type: string }
+        avatar_url: { type: string }
+        noise_pref: { type: integer }
+        light_pref: { type: integer }
+        crowd_pref: { type: integer }
+        smell_pref: { type: integer }
+        visual_pref: { type: integer }
+    ChangePasswordReq:
+      type: object
+      required: [old_password, new_password]
+      properties:
+        old_password: { type: string }
+        new_password: { type: string, minLength: 6 }
+    ReviewReq:
+      type: object
+      required: [noise, light, crowd, smell, visual]
+      properties:
+        text: { type: string }
+        noise: { type: integer, minimum: 1, maximum: 5 }
+        light: { type: integer, minimum: 1, maximum: 5 }
+        crowd: { type: integer, minimum: 1, maximum: 5 }
+        smell: { type: integer, minimum: 1, maximum: 5 }
+        visual: { type: integer, minimum: 1, maximum: 5 }
+    Aggregate:
+      type: object
+      properties:
+        place_id: { type: integer, format: int64 }
+        avg_noise: { type: number }
+        avg_light: { type: number }
+        avg_crowd: { type: number }
+        avg_smell: { type: number }
+        avg_visual: { type: number }
+        overall_avg: { type: number }
+        reviews_count: { type: integer }
